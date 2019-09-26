@@ -1,0 +1,587 @@
+<!DOCTYPE html >
+<html>
+<head>
+
+	<meta charset="UTF-8">
+	<title>Accordion Actions - jQuery EasyUI Demo</title>
+	
+	<link rel="stylesheet" type="text/css" href="./css/index.css">
+	
+	<link rel="stylesheet" type="text/css" href="./EasyUI/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="./EasyUI/themes/icon.css">
+	
+	<script type="text/javascript" src="/EasyUI/jquery.min.js"></script>
+	<script type="text/javascript" src="/Script/jquery-migrate-1.2.1.min.js"></script>
+	<script type="text/javascript" src="/Script/clipboard.min.js"></script>
+	<script type="text/javascript" src="/EasyUI/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="/Script/message.js"></script>
+	<script type="text/javascript" src="/Script/gameobj.js"></script>
+	<script type="text/javascript" src="/Script/bitstate.js"></script>
+	<script type="text/javascript" src="/Script/globalconts.js"></script>
+	<script type="text/javascript" src="/Script/event.js"></script>
+	<script type="text/javascript" src="/Script/tab.js"></script>
+	
+	<script type="text/javascript" src="/Script/hashmap.js"></script>
+</head>
+<body style="height:100%">
+
+	<div class="easyui-layout" style="width:1800px; height:800px;">
+	
+		<!-- 下面是游戏场景界面 -->
+        <div id="mainStage" region="west" split="true" title="游戏场景" style="width:1100px; height:800px;">
+        	<div id="loginScene" style="background-image:url('./images/loginbg.png'); background-size: 100% 100%; width: 100%;height: 100%;position: absolute;" >
+        	
+        		<div id="loginDiv" style="background-image :url('./images/loginbuttonbg.png'); background-size: 100%; width: 30%; height: 45%; position: absolute; left: 50%; top: 27.5%">
+        			<input type="button" onclick="send(1);" style="background-image: url('./images/acclogin.png'); background-repeat: no-repeat; background-size: 100% 100%; width: 260px; height: 70px; position: absolute;left: 10%; top: 10%; border-radius: 15px 15px 15px 15px; box-shadow: 3px 5px 3px #000; outline: none;">
+        			<input type="button" onclick="loginByGameAccountDigLog();" style="background-image: url('./images/welogin.png');  background-repeat: no-repeat; background-size: 100% 100%; width: 260px; height: 70px; position: absolute;left: 10%; top: 40%; border-radius: 15px 15px 15px 15px; box-shadow: 3px 5px 3px #000; outline: none;">
+        			<input type="button" onclick="alert(1);" style="background-image: url('./images/yklogin.png');  background-repeat: no-repeat; background-size: 100% 100%; width: 260px; height: 70px; position: absolute;left: 10%; top: 70%; border-radius: 15px 15px 15px 15px; box-shadow: 3px 5px 3px #000; outline: none;">
+        		</div>
+        	</div>
+        	<!-- 首先来一个布局,卡片布局,多开的保障 -->
+        	<!-- 多开界面 -->
+			<div class="wrap" style="display: none">
+				<!-- 选项卡标题内容 -->
+				<div class="wrap-top">
+						<div class="tab-left">《《</div>
+						<div class="tab-right">》》</div>	
+						<div class="cont-tab">
+								<div class="cont-scroll" id="gameMainWindowTop">
+										<!-- 
+										<li>
+											<span>HTML</span>
+											<a href="javascript:void(0)">X</a>
+											<div class="line"></div>
+										</li>
+										 -->
+								</div>
+						</div>
+				</div>
+		
+				<!-- 选项卡对应内容 -->
+				<div id="gameMainWindow">
+					<!-- 
+					<div class="wrap-content" style="width: 100%; height: 100%"><div class="gametable"></div>　 HTML</div>
+					<div class="wrap-content"> 　CSS</div>
+					<div class="wrap-content"> 　jQuery</div>
+					<div class="wrap-content">　javascript</div>
+					 -->
+				</div>
+		
+		
+				<div class="Add">
+						<span></span>
+						<div class="memu">
+							<li class="add-cont">开启新<br>的牌局</li>
+							<li class="del-cont">关闭所<br>有牌局</li>
+						</div>
+				</div>
+		
+		
+				<!-- 全屏添加内容遮罩 -->
+				<div class="full">
+						<div class="full-wrap">
+								<div class="full-top"><img src="./images/add.png">添加内容<span>X</span></div>
+								<!-- 添加选项卡内容 -->
+								<div class="full-content">
+										<div class="full-inp">
+												<span>添加标题：</span>
+												<input type="" name="" placeholder="选项卡标题">
+										</div>
+										<div class="full-inp">
+												<span>添加内容：</span>
+												<textarea placeholder="选项相应内容"></textarea> 
+										</div>
+										<div class="full-inp">
+												<botton>确 认</botton>
+										</div>
+								</div>
+						</div>
+				</div>
+		
+		
+				<!-- 全屏修改内容遮罩 -->
+				<div class="full-modify">
+						<div class="full-wrap">
+								<div class="full-top"><img src="./images/modify.png">修改内容<span>X</span></div>
+		
+		
+		
+								<!-- 添加选项卡内容 -->
+								<div class="full-content">
+										<div class="full-modi">
+												<span>修改标题：</span>
+												<input type="" name="" placeholder="">
+										</div>
+										<div class="full-modi">
+												<span>修改内容：</span>
+												<textarea placeholder=""></textarea> 
+										</div>
+										<div class="full-modi">
+												<botton>确认</botton>
+										</div>
+								</div>
+						</div>
+				</div>
+			</div>
+        
+        </div>
+	
+        <div region="center" split="true" title="消息构造区" style="width:600px; height:800px;">
+			<h2>客户端消息列表</h2>
+			<p>点击对应的消息类型会在文本框里面生成对应的消息json数据.</p>
+			<br>
+			<div class="easyui-layout" style="width:100%;height:80%;">
+		        <div region="west" split="true" title="MessageType" style="width:240px;">
+		            <p style="padding:5px;margin:0;">选择生成的消息类型:</p>
+		            <hr>
+		            <ul>
+		                <li><a href="javascript:void(0)" onclick="showLoginMessageJson()">模拟登录</a></li>
+		                <li><a href="javascript:void(0)" onclick="showReconnection()">请求重连</a></li>
+		                <li><a href="javascript:void(0)" onclick="showCreateGameMessageJson()">创建游戏</a></li>
+		                <li><a href="javascript:void(0)" onclick="showJoinGameMessageJson()">加入游戏</a></li>
+		                <li><a href="javascript:void(0)" onclick="showExitGameMessageJson()">退出游戏</a></li>
+		                <li><a href="javascript:void(0)" onclick="showReadyStartGameMessageJson()">准备状态</a></li>
+		            </ul>
+		            <div>
+				        <table>
+				            <tr>
+				                <td>玩家昵称:</td>
+				                <td><input id="t_nickname" name="t_nickname" type="text"></input></td>
+				            </tr>
+				            <tr>
+				                <td>玩家Id:</td>
+				                <td><input id="t_playerId" name="t_playerId" type="text"></input></td>
+				            </tr>
+				            <tr>
+				                <td>游戏id:</td>
+				                <td><input id="t_gameId" name="t_gameId" type="text"></input></td>
+				            </tr>
+				            <tr>
+				                <td>牌桌id:</td>
+				                <td><input id="t_tableId" name="t_tableId" type="text"></input></td>
+				            </tr>
+				            <tr>
+				                <td>是否准备:</td>
+				                <td><select id="t_isready" name="t_isready">
+									  <option value=true>准备</option>
+									  <option value=false>取消</option>
+									</select></td>
+				            </tr>
+				            <tr>
+				                <td>是否换桌:</td>
+				                <td><select id="t_changeTable" name="t_changeTable">
+									  <option value=false>否</option>
+									  <option value=true>是</option>
+									</select></td>
+				            </tr>
+				            <tr>
+				                <td>目标座位:</td>
+				                <td><select id="t_targetSeatIndex" name="t_targetSeatIndex">
+									  <option value=-1>退出房间</option>
+									  <option value=0>加入房间</option>
+									  <option value=1>换到1号座位</option>
+									  <option value=2>换到2号座位</option>
+									  <option value=3>换到3号座位</option>
+									  <option value=100>任意位置坐下</option>
+									</select></td>
+				            </tr>
+				        </table>
+		            </div>
+		            <div style="width: 100%;height: 5%;top: 95%;position: absolute;">
+		            	<input type="button" value="发送消息" onclick="sendMsgToServer()" style="width: 45%;left: 2.5%;position: absolute;">
+						<button class="js-copy" data-clipboard-target="#content" style="width: 45%;left: 52.5%;position: absolute;">复制到剪切板</button>
+		            </div>
+		        </div>
+		        <div id="content" region="center" title="MessageJson" style="padding:10px;word-break: break-all;word-wrap: break-word;">
+		        </div>
+		    </div>
+        </div>
+        
+        <div id="notice" region="east" title="游戏通知" style="padding:5px;width:500px;"></div>
+        
+        
+    </div>
+	<script type="text/javascript" src="./Script/wsandheartbeat.js"></script>
+	<script type="text/javascript">
+		window.globalData = {};
+		window.globalData.game = [];
+		window.globalData.self = Player.newObject();
+	
+		$(".wrap").tabs();
+	
+		var map = new HashMap();
+		var arr = [1];
+		map.put(1,arr);
+		map.put(2,arr);
+		map.put(3,arr);
+		map.put(4,arr);
+		console.info(map);
+		
+		var requestJsonObj = {};
+		requestJsonObj.createOrJoinParame = map;
+		
+		var requestJsonStr = JSON.stringify(requestJsonObj);
+		
+		var full = {};
+		full.playerId = 111;
+		full.businessCode = 999;
+		full.requestJsonStr = requestJsonStr;
+	
+		var ssdd = JSON.stringify(full);
+		console.info(ssdd);
+	
+		function sendMsgToServer() {
+			
+			var msg = document.getElementById("content").textContent;
+			var old = document.getElementById("notice").innerHTML;
+			var historySendMsg = getSendDiv("发出", msg);
+			document.getElementById("notice").innerHTML = old + historySendMsg;
+			socket.send(msg.toString());
+		}
+		
+		function onlogicmessage(logicmsg) {
+			var msg = document.getElementById("content").textContent;
+			var old = document.getElementById("notice").innerHTML;
+			var historyRecMsg = getSendDiv("收到", logicmsg);
+			document.getElementById("notice").innerHTML = old + historyRecMsg;
+			
+			
+			if(logicmsg === "恭喜您登录成功."){
+				window.globalData.self.playerId = document.getElementById('t_playerId').value;
+				window.globalData.self.nickname = document.getElementById('t_nickname').value;
+			}
+			
+			var msg = JSON.parse(logicmsg);
+			dispatcher(msg);
+		}
+	
+		function dispatcher(jsonMsg) {
+			var code = jsonMsg.businessCode;
+			switch (code){
+			case 3201:
+			  console.log("收到创建或加入游戏成功");
+			  loadMyGameTable(jsonMsg);//加载自己的牌桌
+			  break;
+			case 1:
+			  x="Today it's Monday";
+			  break;
+			case 2:
+			  x="Today it's Tuesday";
+			  break;
+			case 3:
+			  x="Today it's Wednesday";
+			  break;
+			case 4:
+			  x="Today it's Thursday";
+			  break;
+			case 5:
+			  x="Today it's Friday";
+			  break;
+			case 6:
+			  x="Today it's Saturday";
+			  break;
+			}
+		}
+		//加载牌桌
+		function loadMyGameTable(fullGameInfoJsonObj) {
+			var tttt = fullGameInfoJsonObj.responseParame.gameId;
+			alert(tttt);
+			//新建一个游戏实例,并找到玩家所在的牌桌
+			var game = Game.newObject(fullGameInfoJsonObj.gameId, fullGameInfoJsonObj.responseParame.gameParames);
+			game.gameTables = fullGameInfoJsonObj.responseParame.gameTables;
+			
+			var tables = game.gameTables;
+			var myTable = {};
+			for(var i = 0; i < tables.length; i++){
+				if(tables[i].key == true){
+					myTable = tables[i].value;
+				}
+			}
+			//新建一个游戏牌桌实例,并先找到玩家的SeatInfo
+			var tableId = myTable.tableId;
+			var gameMainWindowTop = document.getElementById("gameMainWindowTop");
+			var topValueCacheId = "" + tableId + "top_game_value";
+			var sceneTableValueCacheId = "" + tableId + "scene_table_value";
+			var tableSceneId = "" + tableId + "table_scene";
+			var findTableTop = document.getElementById(topValueCacheId);
+			if(findTableTop){
+				$("#" + topValueCacheId).val(JSON.stringify(fullGameInfoJsonObj)).change();
+				$("#" + sceneTableValueCacheId).val(JSON.stringify(myTable)).change();
+			} else {
+				var wt = $(this).find(".wrap-top");
+				var topLi = document.createElement("li");
+				// 添加选项卡标题和内容
+				// 添加选项卡标题
+				//添加top头:
+				gameMainWindowTop.appendChild(topLi);
+				topLi.style.borderRadius = "15px 15px 0 0";
+				var titleSpan = document.createElement("span")
+				topLi.appendChild(titleSpan);
+				titleSpan.innerHTML = "游戏:" + tableId;
+				var closeTag = document.createElement("a")
+				topLi.appendChild(closeTag);
+				closeTag.innerHTML = "X";
+				closeTag.href = "javascript:void(0)";
+				//----------------------------------------------
+				//var lineDiv = document.createElement("div");
+				//topLi.appendChild(lineDiv);
+				//lineDiv.className = "line";
+				//----------------------------------------------
+				var topValueCache = document.createElement("input");
+				topLi.appendChild(topValueCache);
+				topValueCache.type = "hidden";
+				topValueCache.id = topValueCacheId;
+				topValueCache.onchange = function(){updateGame(this.value);};
+				
+
+				var gameMainWindow = document.getElementById("gameMainWindow");
+				
+				//一个牌桌场景容器，容器里面主要有牌桌场景和牌桌值缓存input组件
+				var tableSceneContainer = document.createElement("div");
+				tableSceneContainer.id = "" + tableId + "tableSceneContainer";
+				//添加牌桌场景容器 :
+				gameMainWindow.appendChild(tableSceneContainer);
+				
+				tableSceneContainer.className = "wrap-content";
+				tableSceneContainer.style.width = "100%";
+				tableSceneContainer.style.height = "100%";
+				tableSceneContainer.style.height = "100%";
+				var tableScene = document.createElement("div");
+				tableScene.id = tableSceneId;
+				tableSceneContainer.appendChild(tableScene);
+				tableScene.className = "gametable";
+				
+				//test poker view
+				var poker = document.createElement("div");
+				tableScene.appendChild(poker);
+				poker.style.width = "120px";
+				poker.style.height = "200px";
+				poker.style.overflow = 'hidden';
+				poker.style.backgroundImage = "url(./images/poker/pokerbg.png)";
+				poker.style.backgroundSize = "100% 100%";
+
+				var pokerNum = document.createElement("i");
+                poker.appendChild(pokerNum);
+                pokerNum.style.width = "30%";
+                pokerNum.style.height = "25%";
+                pokerNum.style.position = "absolute";
+                pokerNum.style.backgroundImage = "url(./images/poker/rank_a.png)";
+                pokerNum.style.backgroundSize = "100% 100%";
+                pokerNum.style.left = poker.offsetWidth * 0.3 + "px";
+
+				
+				
+				
+				var gameMainWindowTableValueCache = document.createElement("input");
+				gameMainWindowTableValueCache.id = sceneTableValueCacheId;
+				tableScene.appendChild(gameMainWindowTableValueCache);
+				
+				gameMainWindowTableValueCache.type = "hidden";
+				gameMainWindowTableValueCache.onchange = function(){updateGameTable(this.value);};
+				
+				// 添加选项卡内容
+				//$(".full").before(tableSceneContainer);
+				$("#gameMainWindow").append(tableSceneContainer);
+
+				// 添加内容后切换至相应的选项卡和相应的内容
+				$(".wrap-top li").eq($(".wrap-top li").size()-1).css({'background':'#000'}).siblings("li").css({'background':'rgba(66,133,244,0.95)'});
+				$(".wrap-top li").eq($(".wrap-top li").size()-1).find('span').css({'color':'rgba(66,133,244,0.95)'}).end().siblings().find('span').css({'color':'#000'});
+				$(".wrap-content").eq($(".wrap-content").size()-1).show().siblings().hide();
+				wt.show();
+				$(".Add").show();
+				//$(".full").hide();
+
+				
+				margile();
+				
+				$("#" + topValueCacheId).val(JSON.stringify(fullGameInfoJsonObj)).change();
+				$("#" + sceneTableValueCacheId).val(JSON.stringify(myTable)).change();
+			}
+			
+			//if(gameTableData.openView){
+				//创建并显示牌桌
+			//	createGameTableView(gameMainWindow, myTable);
+			//}
+			
+		}
+		
+		//下面是创建div
+		function createGameTableView(gameMainWindow, gameTableData){
+			var myTableId = gameTableData.tableId;
+			
+			//创建一个牌桌div
+			var myTableDiv = document.createElement("div");
+            myTableDiv.id = "" + myTableId;//牌桌组件的id就是牌桌id
+            
+            myTableDiv.style.width = "98%";
+            myTableDiv.style.height = "98%";
+            myTableDiv.style.background = "url(./images/bg.png) no-repeat fixed , url(./images/bg.png) no-repeat 50% 80%";
+            myTableDiv.style.position = "absolute";
+            
+            var gameTableValueCache = document.createElement("input");
+            gameTableValueCache.type = "hidden";
+            gameTableValueCache.value = gameTableData;
+            gameTableValueCache.addEventListener("input", updateGameTable(this.value))
+            //gameTableValueCache.onchange = function(){updateGameTable(this.value);};
+            gameTableValueCache.value = "dsfdsdfsdfdfsdsd";
+            
+            gameTableValueCache.id = myTableDiv.id + "value";
+            myTableDiv.appendChild(gameTableValueCache);
+            
+			var myTableDivWidth = gameMainWindow.offsetWidth * 0.98;
+			var myTableDivHeight = gameMainWindow.offsetHeight * 0.98;
+			
+			//将样式添加到div上，显示div
+			//myTableDiv.style.cssText = "" 
+			//	+"z-index:5;"
+			//	+"width:" + myTableDivWidth + 'px;'
+			//	+"height:" + myTableDivHeight + 'px;'
+			//	+"background-image:url(./images/bg.png);"
+			//	+"background-size:contain;"
+			//	+"position:absolute;"
+			//	;
+			//创建一个房间ID的文本节点
+			var tableTitleText = document.createTextNode("游戏房间: " + myTableId);
+			
+			//将按钮和文本节点追加到div
+            myTableDiv.appendChild(tableTitleText);
+      
+            gameMainWindow.appendChild(myTableDiv);
+            
+          	//创建一个准备按钮
+			var readyButton = document.createElement("input");
+			var readyButtonWidth = myTableDivWidth / 6;
+			readyButton.type = "button";
+			readyButton.id = "" + myTableId + "readybutton";//设置组件的id
+			readyButton.style.width = readyButtonWidth + "px";
+			readyButton.style.height = myTableDivHeight / 10 + "px";
+			readyButton.style.backgroundImage = "url(./images/ready.png)";
+			readyButton.style.backgroundSize = readyButton.style.width + " " + readyButton.style.height;
+			readyButton.style.left = myTableDiv.offsetLeft + myTableDivWidth / 2 - readyButtonWidth / 2 +"px";
+			readyButton.style.top = myTableDiv.offsetTop + myTableDivHeight / 3 + "px";
+			readyButton.style.position = "absolute";
+			//如果不在游戏中
+			if (hasState(gameTableData.gameTableStates, GloBalConts.OP_INGAME)) {
+				readyButton.style.display = "none";
+			} else {
+				readyButton.style.display = "";
+			}
+			
+	        //var testInputFunction = document.createAttribute("onclick");
+	        //testInputFunction.value = "readysend(111)";
+	        //readyButton.setAttributeNode(testInputFunction);
+	        myTableDiv.appendChild(readyButton);
+            
+			if(gameTableData.seatTotalLength == 3){//三个座位的加载方式
+				createDownSeatView(myTableDiv, myTableId);
+				//createLeftSeatView();
+				//createRightSeatView();
+			}
+			
+			
+			var mySeatIndex = 0;
+			var seatInfos = gameTableData.allSeatInfo;
+			for (var i = 0; i < seatInfos.length; i++) {
+				if(window.globalData.self.playerId == seatInfos[i].playerId) {	//先找到自己的位置
+					mySeatIndex = seatInfos[i].seatIndex;
+				}
+				seatInfos[i].effective
+				//Do something 
+			}
+			alert(mySeatIndex);
+			for(var i = 0; i < seatInfos.length; i++){
+				playerSitDown(seatInfos[i], mySeatIndex);
+			}
+			
+			showReadyButton(myTableId, true, true);
+		}
+		
+		function playerSitDown(seatInfoData, mySeatIndex) {
+			var targetIndx = seatInfoData.seatIndex - mySeatIndex;
+			if(targetIndex == 0){//这是自己
+				
+			}
+		}
+		
+		function showReadyButton(tableId, playerId, show, evenValue){
+			var buttonId = "" + tableId + 0 + "readybutton";
+			var readyButton = document.getElementById(buttonId);
+			if(show){
+				readyButton.style.display = "";
+			} else {
+				readyButton.style.display = "none";
+			}
+			document.getElementById("" + tableId + 'seat').value;
+			var gameId = document.getElementById("gameMainWindow").value.gameId;
+			
+ 			readyButton.onclick = function(){readyToStartGame(gameId, tableId, playerId, evenValue);};
+		}
+		
+		function readyToStartGame(gameId, tableId, playerId, isReady){
+			var readyMsg = {"businessCode":3103,
+			"playerId":3000,
+			"requestJsonStr":
+				"{\"gameId\":" + gameId + ",\"playerId\":" + playerId + ",\"readyStartGame\":"
+				+ isReady +",\"tableId\":" + tableId + "}"};
+
+			var msgJsonStr = JSON.stringify(readyMsg);
+			send(msgJsonStr);
+		}
+		
+		function getSendDiv(shoudao, msg) {
+			var div = "";
+			if(shoudao == "发出"){
+				div = 
+					"<div align='left' style='border:1px solid #FFFFFF;'>"
+				        + "<table border=0 style='table-layout:fixed;'> "
+							+ "<COL><COL WIDTH=100><COL WIDTH=100>"
+							+ "<tr>" 
+								+ "<td><div style='width: 50px'> " 
+								+ "<div style='color: #FFFFFF;background-color: rgb(233, 104, 107); border:5px solid rgb(233, 104, 107); border-radius: 5px;'>" 
+								+ shoudao + " : </div> " 
+								+ "</div></td><td align='left'><div style='color: rgb(233, 104, 107);'>"+ Date() +"</div></td>" 
+							+ "</tr>" 
+							+ "<tr>" 
+								+ "<td></td>" 
+								+ "<td width=100px><div style='width: 400px;word-break: break-all;word-wrap: break-word;'> " 
+								+ "<div style='color: #FFFFFF; background-color: rgb(233, 104, 107); border:5px solid rgb(233, 104, 107); border-radius: 5px;'>" + msg + "</div></div></td>" 
+							+ "</tr>" 
+						+ "</table>"
+			        + "</div>";
+				
+				
+			} else {
+				
+				div = 
+					"<div align='right' style='border:1px solid #FFFFFF;'>"
+				        + "<table border=0 style='table-layout:fixed;'> "
+							+ "<COL><COL WIDTH=100><COL WIDTH=100>"
+							+ "<tr>" 
+								+ " <td align='right'><div style='color: rgb(58, 105, 85);'>"+ Date() +"</div></td>" 
+								+ "<td><div style='width: 50px'> " 
+								+ "<div style='color: #FFFFFF;background-color: rgb(58, 105, 85); border:5px solid rgb(58, 105, 85); border-radius: 5px;'> : " 
+								+ shoudao + "</div></div></td>" 
+							+ "</tr>" 
+							+ "<tr>" 
+								+ "<td width=100px><div style='width: 400px;word-break: break-all;word-wrap: break-word;'> " 
+								+ "<div align='right' style='color: #FFFFFF; background-color: rgb(58, 105, 85); border:5px solid rgb(58, 105, 85); border-radius: 5px;'>" 
+								+ msg + "</div></div></td>" 
+								+ "<td></td>"
+							+ "</tr>" 
+						+ "</table>"
+			        + "</div>";
+				
+			}
+
+			return div;
+		}
+		
+		//复制内容
+		var clipboard = new Clipboard('.js-copy',{
+			target: function() {
+				return document.querySelector('#content');
+			}
+		});
+	</script>
+</body>
+</html>

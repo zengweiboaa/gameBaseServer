@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="  
+    http://www.springframework.org/schema/context  
+    http://www.springframework.org/schema/context/spring-context.xsd  
+    http://www.springframework.org/schema/util 
+    http://www.springframework.org/schema/util/spring-util.xsd
+    http://www.springframework.org/schema/beans  
+    http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<import resource="classpath*:spring-executor-base"/>
+	
+	<!-- 这个bean是系统配置，根据需要，在后面的项目加载这个bean吧.这儿不加载,灵活一点 -->
+	<!-- 主要的操作包括系统初始化,redis的数据初始化或者清理等工作 -->
+	<!-- <bean class="com.angke.game.config.ServerInit"/> -->
+	
+	<util:properties id="serverGlobalConfigProperties" location="classpath:/GlobalConfig.properties" />
+	
+	<!-- 自动扫描spring注解 -->
+	<context:component-scan base-package="com.angke.service" />
+</beans>

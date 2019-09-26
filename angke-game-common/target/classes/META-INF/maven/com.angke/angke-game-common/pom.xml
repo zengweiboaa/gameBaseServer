@@ -1,0 +1,75 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.angke</groupId>
+    <artifactId>game-server-farmework</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <artifactId>angke-game-common</artifactId>
+  
+  <dependencies>
+	<!-- kryo序列化 -->
+	<dependency>
+	    <groupId>com.esotericsoftware</groupId>
+	    <artifactId>kryo</artifactId>
+	    <version>4.0.0</version>
+	</dependency>
+		
+	<!-- kryo序列化依赖 -->
+	<dependency>
+	    <groupId>commons-codec</groupId>
+	    <artifactId>commons-codec</artifactId>
+	    <version>1.10</version>
+	</dependency>
+  
+	<dependency>
+	    <groupId>io.protostuff</groupId>
+	    <artifactId>protostuff-core</artifactId>
+	    <version>1.6.0</version>
+	</dependency>
+
+	<dependency>
+	    <groupId>io.protostuff</groupId>
+	    <artifactId>protostuff-runtime</artifactId>
+	    <version>1.6.0</version>
+	</dependency>
+	
+	<dependency>
+	   <groupId>io.netty</groupId>
+	   <artifactId>netty-all</artifactId>
+	   <version>4.1.9.Final</version>
+  	</dependency>
+	
+	<dependency>
+	   <groupId>org.slf4j</groupId>
+	   <artifactId>slf4j-log4j12</artifactId>
+	   <version>1.7.2</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-context</artifactId>
+		<version>${spring.version}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-aop</artifactId>
+		<version>${spring.version}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-core</artifactId>
+		<version>${spring.version}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-web</artifactId>
+		<version>${spring.version}</version>
+	</dependency>
+	
+  </dependencies>
+  
+</project>

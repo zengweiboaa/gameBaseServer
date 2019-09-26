@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+
+	<title>WebSocket Chat</title>
+
+	<link href="./EasyUI/themes/default/easyui.css" rel="stylesheet" type="text/html" />
+	<link href="./EasyUI/themes/icon.css" rel="stylesheet" type="text/html" />
+	<script src="./EasyUI/jquery.min.js" type="text/javascript"></script>
+	<script src="./EasyUI/jquery.easyui.min.js" type="text/javascript"></script>
+
+</head>
+<body class="easyui-layout">
+	<script type="text/javascript">
+		
+		var socket;
+		if (!window.WebSocket) {
+			window.WebSocket = window.MozWebSocket;
+		}
+		
+		function sendHeartMsg() {
+			var timestamp = (new Date()).valueOf();
+			var m5 = timestamp % 100000;
+			var hMsg = "{'t':" + m5 + "}";
+			//var login = "{'message':{'name':'zhangsan','password':'12345'},'msgCode':1}";
+			socket.send(hMsg);
+		}
+		
+		
+		var heartOp = false;
+		
+		var heartCheck = {
+			    timeout: null,//ms毫秒间隔
+			    timeoutStr: null,
+			    timeoutObj: null,
+			    reset:function(){
+			    	clearInterval(heartCheck.timeoutObj);
+			    	//setTimeout(this.start,this.timeout);
+					heartCheck.start();
+				},
+				start:function(){
+					heartCheck.timeoutObj = window.setInterval(sendHeartMsg,heartCheck.timeout);
+				},
+				stop:function(){
+			    	heartCheck.timeoutObj = null;
+					clearInterval(heartCheck.timeoutObj);
+				}
+		}
+		
+		var i = 1;
+		
+		function test(dat){
+				var ta = document.getElementById('responseText');
+				eval('var obj = (' + dat + ')');
+				ta.value = ta.value + ':\t\n' + obj.index + '\n';
+				
+				console.log("start---if---");
+				console.log("start---if---之前 i 的值：" + i);
+				if(obj.index - i == 0) {
+					
+					console.log("<<<没有覆盖的域:");
+					console.log("没有覆盖时候i的值:" + i + ",index的值:" + obj.index);
+					console.log(":没有覆盖的域>>>");
+					i = i + 1;
+				}else if(obj.index - i > 0) {
+					console.log("<<<++++++覆盖的域:");
+					console.log("覆盖时候i的值:" + i + ",index的值:" + obj.index);
+					console.log(":覆盖的域++++++>>>");
+				}
+		}
+		
+		if (window.WebSocket) {
+			var host  = window.location.host;
+			
+			var url = "ws://" + host + "/ws";
+			//var url = "ws://192.168.1.231:9998/ws";
+			//socket = new WebSocket("ws://DESKTOP-GeTOUO:9998/ws");
+			socket = new WebSocket(url);
+			
+			socket.onmessage = function(event) {
+				console.log("-------------------start------------------");
+				console.log("on message ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+				var dat = event.data
+				console.log(dat);
+				try {
+					eval('var onopen = (' + dat + ')');
+				
+					if(onopen.timeout && onopen.timeoutCount){
+						
+						console.log("heartCheck.timeout  " + heartCheck.timeout);
+						try {
+							heartCheck.timeout 
+								= onopen.timeout;
+						} catch (e) {
+							console.log(e);
+						}
+						console.log("heartCheck.timeout  " + heartCheck.timeout);
+						//heartCheck.timeoutStr = obj.heartContexts[1];
+						heartCheck.start();
+						return;
+					}
+					
+					if(obj.t) {
+						var timestamp = (new Date()).valueOf();
+						var ms = timestamp % 100000 - obj.t;
+						console.log("当前系统延迟:" + ms + " ms");
+						return;
+					}
+				} catch (e) {
+					//alert(e.name + ": " + e.message);
+				}
+				
+				//try{
+				//	var timestampss = (new Date()).valueOf();
+				//	var m55 = timestampss % 100000;
+				//	eval('var obj = (' + event.data + ')');
+				//	var msss = m55 - obj.s;
+				//	console.log(msss + "延时时间");
+				//}catch(e){
+				//	
+				//}
+				
+				
+				
+				var ta = document.getElementById('responseText');
+				ta.value = ta.value + '---->> 收到服务器消息:' + event.data + "\n";
+				
+				heartCheck.reset();
+				
+				
+				
+				//var obj = JSON.parse(event.data);
+				//test(dat);
+				console.log("--------------------end-----------------");
+			};
+			socket.onopen = function(event) {
+				//heartCheck.start();
+				//socket.send("onopen");
+				var ta = document.getElementById('responseText');
+				ta.value = "连接开启!\n";
+				
+				//var binary = new Uint8Array(5);  
+			    //binary[0] = 11;  
+				//binary[1] = 12;  
+				//binary[2] = 16;  
+				//binary[3] = 17;  
+				//binary[4] = 18;  
+				//socket.send(binary.buffer);  
+				
+				
+			};
+			socket.onclose = function(event) {
+				heartCheck.stop();
+				var ta = document.getElementById('responseText');
+				ta.value = ta.value + "连接被关闭\n";
+				//reconnect;
+			};
+		} else {
+			alert("你的浏览器不支持 WebSocket！");
+		}
+
+		function send(message) {
+
+			if (!window.WebSocket) {
+				return;
+			}
+			if (socket.readyState == WebSocket.OPEN) {
+				var ta = document.getElementById('responseText');
+				ta.value = ta.value + '\n<<---发送给服务器:' + message + "\n";
+				socket.send(message);
+			} else {
+				alert("连接没有开启.");
+			}
+		}
+		
+		function showcontent(language){
+	        $('#content').html('Introduction to ' + language + ' language');
+	    }
+		
+	</script>
+	
+	
+	
+	<div class="easyui-panel" title="Complex Panel Layout" iconCls="icon-search" collapsible="true" style="padding:5px;width:500px;height:250px;">
+        <div class="easyui-layout" fit="true">
+            <div region="north" border="false" class="p-search">
+                <label>Search:</label><input></input>
+            </div>
+            <div region="center" border="false">
+                <div class="easyui-layout" fit="true">
+                    <div region="east" border="false" class="p-right">
+                        <img src="images/headIcon.png"/>
+                    </div>
+                    <div region="center" border="false" style="border:1px solid #ccc;">
+                        <div class="easyui-layout" fit="true">
+                            <div region="south" split="true" border="false" style="height:60px;">
+                                <textarea style="border:0;width:100%;height:100%;resize:none">Hi,I am easyui.</textarea>
+                            </div>
+                            <div region="center" border="false">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+	
+	<!-- 
+	<table>
+		<tr>
+			<td>
+			
+			<form onsubmit="return false;">
+				<h3 id="player">WebSocket 游戏测试客户端：</h3>
+				<textarea id="responseText" style="width: 500px; height: 300px;"></textarea>
+				<br> <input type="text" name="message" style="width: 300px"
+					value="Welcome to angke chat"> 
+					<input type="button" value="发送消息" onclick="send(this.form.message.value)"> 
+					<input type="button" onclick="javascript:document.getElementById('responseText').value=''" value="清空聊天记录">
+			</form>
+			
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+		</tr>
+	</table>
+	 -->
+	
+	
+	<div class="easyui-dialog" style="width:400px;height:200px"
+	    data-options="title:'My Dialog',collapsible:true,iconCls:'icon-ok',onOpen:function(){}">
+	        dialog content.
+	</div>
+	<form onsubmit="return false;">
+		<h3>WebSocket 聊天测试客户端：</h3>
+		<textarea id="responseText" style="width: 500px; height: 300px;"></textarea>
+		<br> <input type="text" name="message" style="width: 300px"
+			value="Welcome to angke chat"> 
+			<input type="button" value="发送消息" onclick="send(this.form.message.value)"> 
+			<input type="button" onclick="javascript:document.getElementById('responseText').value=''" value="清空聊天记录">
+	</form>
+	<div id="test_div"></div>
+	<br>
+	<br>
+	<a href="http://www.angke.com/">hhhhh</a>
+	
+</body>
+</html>
